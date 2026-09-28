@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terulas — Control Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--bg:#F7F7F5;--sf:#fff;--tx:#111;--bd:#E5E5E5;--mu:#737373;--sb:#111;--ok:#15803d;--okb:#e8f5ec;--wn:#b45309;--wnb:#fdf1e0;--er:#b91c1c;--erb:#fdeaea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0d0c;--sf:#171717;--tx:#f2f2f0;--bd:#2c2c2c;--mu:#9a9a9a;--sb:#000;--okb:#12301c;--wnb:#33240e;--erb:#361616;--ok:#5fd18a;--wn:#f0b45f;--er:#f08a8a}}
+:root[data-theme="dark"]{--bg:#0d0d0c;--sf:#171717;--tx:#f2f2f0;--bd:#2c2c2c;--mu:#9a9a9a;--sb:#000;--okb:#12301c;--wnb:#33240e;--erb:#361616;--ok:#5fd18a;--wn:#f0b45f;--er:#f08a8a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 'Plus Jakarta Sans',system-ui,sans-serif}
+aside{position:fixed;inset:0 auto 0 0;width:220px;background:var(--sb);color:#fff;padding:24px 14px;display:flex;flex-direction:column;gap:2px}
+aside b{font-size:18px;letter-spacing:.5px;padding:0 10px}aside small{color:#9a9a9a;padding:0 10px 20px;display:block}
+aside a{color:#bdbdbd;text-decoration:none;padding:9px 10px;border-radius:8px;cursor:pointer}
+aside a.on,aside a:hover{background:#222;color:#fff}
+main{margin-left:220px;padding:24px 32px 60px;max-width:1200px}
+.top{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-bottom:24px}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+input:focus,select:focus,button:focus-visible,a:focus-visible,textarea:focus{outline:2px solid #888;outline-offset:1px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:0 0 12px}p.m,.m{color:var(--mu)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.g2{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.c{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.big{font-size:30px;font-weight:700;letter-spacing:-.5px}
+.btn{background:var(--tx);color:var(--bg);border:0;border-radius:8px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer}
+.btn.s{background:transparent;color:var(--tx);border:1px solid var(--bd)}.btn.d{background:var(--er);color:#fff}.btn.sm{padding:4px 9px;font-size:12px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);font-weight:500;font-size:12px}
+.bg{padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600}.ACTIVE{background:var(--okb);color:var(--ok)}.UNACTIVATED{background:var(--wnb);color:var(--wn)}.DISABLED{background:var(--erb);color:var(--er)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:99px;padding:5px 13px;cursor:pointer;font:inherit}.tabs button.on{background:var(--tx);color:var(--bg)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.cd{cursor:pointer;font-weight:600}
+code{background:var(--bg);padding:2px 6px;border-radius:5px;word-break:break-all}
+.qr{background:#fff;padding:8px;border-radius:10px;width:200px;border:1px solid var(--bd)}.qr svg{width:100%;height:auto;display:block}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.md{background:var(--sf);border-radius:14px;padding:22px;max-width:420px;width:100%}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));right:20px;background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:10}
+.bar{height:8px;background:var(--bd);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--tx)}
+label{display:block;margin:12px 0 4px;font-weight:600}.fl{width:100%}
+.mb{display:none}
+@media(max-width:800px){aside{position:static;width:auto;flex-direction:row;overflow-x:auto;padding:10px}aside b,aside small{display:none}main{margin:0;padding:16px}.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+</style></head><body>
+<aside id="nav"></aside><main id="app"></main><div id="ov"></div><div id="ts"></div>
+<script>
+const DOM='https://go.tertag.id/',CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const D={batches:[],cards:[],logs:[],ids:new Set()};
+function rid(){let a=new Uint32Array(6),s='';do{crypto.getRandomValues(a);s=[...a].map(n=>CH[n%CH.length]).join('')}while(D.ids.has(s));D.ids.add(s);return s}
+function log(action,entity,extra){D.logs.unshift({action,entity,extra,t:Date.now()});save()}
+function save(){try{localStorage.setItem('terulas',JSON.stringify({b:D.batches,c:D.cards,l:D.logs,e:EV}))}catch(e){}}
+function load(){try{const x=JSON.parse(localStorage.getItem('terulas'));if(x&&x.c&&x.c.length){D.batches=x.b;D.cards=x.c;D.logs=x.l;(x.e||[]).forEach((e,i)=>EV[i]=e);D.cards.forEach(c=>D.ids.add(c.rid));return true}}catch(e){}return false}
+function mkBatch(name,qty,notes,dayAgo=0){const b={id:'b'+(D.batches.length+1),name,qty,notes,at:Date.now()-dayAgo*864e5,status:'COMPLETED'};D.batches.unshift(b);
+ for(let i=0;i<qty;i++){const r=rid();D.cards.push({cid:'TRL-'+r,rid:r,batch:b.id,status:'UNACTIVATED',biz:'',dest:'',at:b.at,act:null})}
+ log('CREATE_BATCH',b.name,qty+' kartu');return b}
+const BIZ=['Kopi Senja','Warung Budi','Ayam Bakar 88','Toko Mawar','Salon Ayu','Bengkel Jaya'];
+function seed(){mkBatch('September #001',60,'',6);mkBatch('September #002',40,'',4);
+D.cards.forEach((c,i)=>{if(i%3==0&&i<70){c.status='ACTIVE';c.biz=BIZ[i%6];c.dest='https://g.page/r/'+c.rid.toLowerCase()+'/review';c.act=c.at}else if(i==5||i==50){c.status='DISABLED';c.biz='Warung Budi';c.dest='https://g.page/r/x/review'}});}
+const EV=[[1200,700],[1500,860],[1350,900],[1700,1000],[1900,1200],[2200,1350],[2600,1600]].map(a=>({qr:a[0],nfc:a[1]}));
+const days=[...Array(7)].map((_,i)=>new Date(Date.now()-(6-i)*864e5).toLocaleDateString('id-ID',{day:'numeric',month:'short'}));
+load()||seed();
+const fd=t=>new Date(t).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+const ago=t=>{const m=Math.max(1,Math.round((Date.now()-t)/6e4));return m<60?m+' menit lalu':m<1440?Math.round(m/60)+' jam lalu':Math.round(m/1440)+' hari lalu'};
+const cnt=s=>D.cards.filter(c=>!s||c.status==s).length;
+const bdg=s=>`<span class="bg ${s}">${{ACTIVE:'Aktif',UNACTIVATED:'Belum aktif',DISABLED:'Nonaktif'}[s]}</span>`;
+const bname=id=>(D.batches.find(b=>b.id==id)||{}).name||'-';
+function toast(m){$('#ts').innerHTML=`<div class="toast">${esc(m)}</div>`;setTimeout(()=>$('#ts').innerHTML='',2400)}
+function qrSvg(u,f){const q=qrcode(0,'M');q.addData(u);q.make();return q.createSvgTag({cellSize:f?8:4,margin:4,scalable:!f})}
+function qrPng(u){return new Promise(res=>{const q=qrcode(0,'M');q.addData(u);q.make();const n=q.getModuleCount(),s=12,m=4,W=(n+2*m)*s,cv=document.createElement('canvas');cv.width=cv.height=W;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,W);x.fillStyle='#000';for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))x.fillRect((c+m)*s,(r+m)*s,s,s);cv.toBlob(res,'image/png')})}
+async function dl(name,data){try{const d=window.claude&&await claude.use('downloads');if(!d){toast('Unduhan tidak tersedia di tampilan ini');return}await d.save({filename:name,data});toast('File disimpan')}catch(e){if(!e||e.code!='declined')toast('Unduhan gagal, coba lagi')}}
+async function dlQ(id,t){const c=D.cards.find(x=>x.rid==id),u=DOM+id;dl(c.cid+'.'+t,t=='svg'?qrSvg(u,1):await qrPng(u))}
+const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+async function zipB(id){const b=D.batches.find(x=>x.id==id),z=new JSZip();toast('Menyiapkan ZIP…');for(const c of D.cards.filter(c=>c.batch==id)){const u=DOM+c.rid;z.file(c.cid+'.svg',qrSvg(u,1));z.file(c.cid+'.png',await qrPng(u))}dl('batch-'+slug(b.name)+'.zip',await z.generateAsync({type:'blob'}))}
+function csvB(id){const b=D.batches.find(x=>x.id==id),q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',d=t=>t?new Date(t).toISOString().slice(0,10):'';
+ dl('batch-'+slug(b.name)+'.csv',['Card ID,Redirect ID,Redirect URL,Status,Batch,Destination URL,Created At,Activated At',...D.cards.filter(c=>c.batch==id).map(c=>[c.cid,c.rid,DOM+c.rid,c.status,b.name,c.dest,d(c.at),d(c.act)].map(q).join(','))].join('\n'))}
+function confirmD(title,msg,ok,fn,danger){$('#ov').innerHTML=`<div class="ov"><div class="md"><h2>${title}</h2><p class="m">${msg}</p><div class="row" style="justify-content:flex-end"><button class="btn s" id="cn">Batal</button><button class="btn ${danger?'d':''}" id="ok">${ok}</button></div></div></div>`;
+ $('#cn').onclick=()=>$('#ov').innerHTML='';$('#ok').onclick=()=>{$('#ov').innerHTML='';fn()}}
+function validUrl(u){try{return new URL(u).protocol=='https:'}catch(e){return false}}
+const NAV=[['dash','Dashboard'],['cards','Cards'],['batches','Batches'],['create','Create Cards'],['redirect','Uji Redirect'],['analytics','Analytics'],['settings','Settings']];
+const S={f:'ALL',q:'',batch:'',pg:1,ps:50};
+function route(){const h=(location.hash||'#dash').slice(1).split('/'),v=h[0];
+ $('#nav').innerHTML=`<b>TERULAS</b><small>by Tertag</small>`+NAV.map(n=>`<a href="#${n[0]}" class="${v==n[0]||(v=='card'&&n[0]=='cards')||(v=='batch'&&n[0]=='batches')?'on':''}">${n[1]}</a>`).join('');
+ const top=`<div class="top"><input id="gs" placeholder="Cari Card ID…" style="width:240px"><span class="m">Admin</span></div>`;
+ const V={dash,cards,card,batches,batch,create,redirect,analytics,settings}[v]||dash;
+ $('#app').innerHTML=top+V(h[1]);const g=$('#gs');g.onkeydown=e=>{if(e.key=='Enter'){S.q=g.value;S.f='ALL';S.batch='';S.pg=1;location.hash='#cards';route()}};if(V.after)V.after(h[1])}
+function cardRows(list){return list.map(c=>`<tr><td><span class="cd" onclick="location.hash='#card/${c.rid}'">${c.cid}</span></td><td>${bdg(c.status)}</td><td>${bname(c.batch)}</td><td>${esc(c.biz)||'-'}</td><td>${c.dest?'Google Review':'-'}</td><td>${fd(c.at)}</td><td><button class="btn s sm" onclick="location.hash='#card/${c.rid}'">Lihat</button></td></tr>`).join('')}
+const CT='<div class="tw"><table><tr><th>Card ID</th><th>Status</th><th>Batch</th><th>Business</th><th>Destination</th><th>Created</th><th></th></tr>';
+function dash(){const t=cnt(),tq=EV.reduce((a,e)=>a+e.qr,0),tn=EV.reduce((a,e)=>a+e.nfc,0),ti=tq+tn;
+ const st=[['Total Kartu',t],['Kartu Aktif',cnt('ACTIVE')],['Kartu Belum Aktif',cnt('UNACTIVATED')],['Kartu Dinonaktifkan',cnt('DISABLED')]];
+ return `<h1>Halo, Admin 👋</h1><p class="m">Berikut ringkasan aktivitas dan statistik Terulas Anda hari ini.</p>
+<div class="g4" style="margin:20px 0">${st.map(s=>`<div class="c" style="margin:0"><span class="m">${s[0]}</span><div class="big">${s[1].toLocaleString('id-ID')}</div></div>`).join('')}</div>
+<div class="c row" style="justify-content:space-between"><div><h2 style="margin:0">Siap membuat kartu baru?</h2><span class="m">Buat batch baru untuk menghasilkan kartu, QR code, dan redirect URL secara otomatis.</span></div><button class="btn" onclick="location.hash='#create'">+ Buat Batch Kartu</button></div>
+<div class="g2"><div class="c"><h2>Statistik Interaksi</h2><p class="m" style="margin-top:-8px">Total scan QR dan tap NFC dalam 7 hari terakhir.</p>${chart()}</div>
+<div class="c"><h2>Total Interaksi</h2><div class="big">${ti.toLocaleString('id-ID')}</div><p class="m">QR Scan ${tq.toLocaleString('id-ID')} · ${Math.round(tq/ti*100)}%</p><div class="bar"><i style="width:${tq/ti*100}%"></i></div><p class="m">NFC Tap ${tn.toLocaleString('id-ID')} · ${Math.round(tn/ti*100)}%</p></div></div>
+<div class="c"><h2>Kartu Terbaru</h2>${CT}${cardRows(D.cards.slice(-5).reverse())}</table></div></div>
+<div class="g2"><div class="c"><h2>Batch Terbaru</h2>${batchTable(D.batches.slice(0,3))}</div>
+<div class="c"><h2>Aktivitas Terbaru</h2>${D.logs.slice(0,6).map(l=>`<div style="padding:6px 0;border-bottom:1px solid var(--bd)"><b>${esc(l.entity)}</b> <span class="m">${l.action.toLowerCase().replace('_',' ')} · ${ago(l.t)}</span></div>`).join('')||'<p class="m">Belum ada aktivitas.</p>'}</div></div>`}
+function chart(){const W=560,H=180,mx=Math.max(...EV.map(e=>e.qr))*1.1,x=i=>30+i*(W-50)/6,y=v=>H-24-v/mx*(H-40);
+ const ln=k=>EV.map((e,i)=>(i?'L':'M')+x(i)+','+y(e[k])).join(' ');
+ return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><path d="${ln('qr')}" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="${ln('nfc')}" fill="none" stroke="#9a9a9a" stroke-width="2.5" stroke-dasharray="5 4"/>${days.map((d,i)=>`<text x="${x(i)}" y="${H-4}" font-size="10" text-anchor="middle" fill="currentColor" opacity=".6">${d}</text>`).join('')}<text x="34" y="14" font-size="11" fill="currentColor">— QR Scan</text><text x="110" y="14" font-size="11" fill="currentColor" opacity=".6">- - NFC Tap</text></svg>`}
+function batchTable(l){return `<div class="tw"><table><tr><th>Batch Name</th><th>Total Cards</th><th>Status</th><th>Created</th></tr>${l.map(b=>`<tr><td><span class="cd" onclick="location.hash='#batch/${b.id}'">${esc(b.name)}</span></td><td>${b.qty.toLocaleString('id-ID')}</td><td>${b.status=='COMPLETED'?'Completed':b.status}</td><td>${fd(b.at)}</td></tr>`).join('')}</table></div>`}
+function cards(){let l=D.cards.filter(c=>(S.f=='ALL'||c.status==S.f)&&(!S.batch||c.batch==S.batch)&&(!S.q||[c.cid,c.rid,c.biz,c.dest,bname(c.batch)].join(' ').toLowerCase().includes(S.q.toLowerCase()))).reverse();
+ const pages=Math.max(1,Math.ceil(l.length/S.ps));S.pg=Math.min(S.pg,pages);const pl=l.slice((S.pg-1)*S.ps,S.pg*S.ps);
+ return `<h1>Kartu</h1><div class="tabs">${[['ALL','Semua Kartu'],['ACTIVE','Aktif'],['UNACTIVATED','Belum Aktif'],['DISABLED','Dinonaktifkan']].map(t=>`<button class="${S.f==t[0]?'on':''}" onclick="S.f='${t[0]}';S.pg=1;route()">${t[1]}</button>`).join('')}</div>
+<div class="row" style="margin-bottom:12px"><input id="cq" placeholder="Card ID, Redirect ID, business, URL…" value="${esc(S.q)}" style="min-width:260px" onkeydown="if(event.key=='Enter'){S.q=this.value;S.pg=1;route();$('#cq').focus()}">
+<select onchange="S.batch=this.value;S.pg=1;route()"><option value="">Semua batch</option>${D.batches.map(b=>`<option value="${b.id}" ${S.batch==b.id?'selected':''}>${esc(b.name)}</option>`).join('')}</select>
+<select onchange="S.ps=+this.value;S.pg=1;route()">${[25,50,100].map(n=>`<option ${S.ps==n?'selected':''}>${n}</option>`).join('')}</select></div>
+<div class="c">${pl.length?CT+cardRows(pl)+'</table></div>':`<p><b>Kartu tidak ditemukan.</b></p><button class="btn" onclick="S.f='ALL';S.q='';S.batch='';route()">Reset Filter</button>`}
+<div class="row" style="justify-content:space-between;margin-top:12px"><span class="m">${l.length} kartu · halaman ${S.pg}/${pages}</span><span class="row"><button class="btn s sm" ${S.pg<2?'disabled':''} onclick="S.pg--;route()">Sebelumnya</button><button class="btn s sm" ${S.pg>=pages?'disabled':''} onclick="S.pg++;route()">Berikutnya</button></span></div></div>`}
+function card(id){const c=D.cards.find(x=>x.rid==id);if(!c)return '<div class="c"><b>Kartu tidak ditemukan.</b></div>';const u=DOM+c.rid;
+ const acts=(c.status!='DISABLED'?`<button class="btn d" onclick="disableC('${c.rid}')">Disable</button>`:`<button class="btn" onclick="reactC('${c.rid}')">Reactivate</button>`);
+ return `<button class="btn s sm" onclick="location.hash='#cards'">← Semua kartu</button><div class="g2" style="margin-top:14px"><div class="c"><h1>${c.cid} ${bdg(c.status)}</h1><p class="m">Redirect ID ${c.rid} · ${esc(bname(c.batch))} · dibuat ${fd(c.at)}${c.act?' · aktif '+fd(c.act):''}</p>
+<label>Permanent Redirect URL</label><code>${u}</code> <button class="btn s sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${u}').then(()=>toast('Redirect URL disalin'),()=>toast('Salin manual dari kolom'))">Copy Redirect URL</button>
+<label>Business</label><input id="bz" class="fl" value="${esc(c.biz)}" placeholder="Nama bisnis (opsional)">
+<label>Destination URL</label><input id="ds" class="fl" value="${esc(c.dest)}" placeholder="https://g.page/r/xxxx/review"><p class="m" id="er" style="color:var(--er);margin:4px 0"></p>
+<div class="row" style="margin-top:8px"><button class="btn" onclick="saveD('${c.rid}')">${c.status=='UNACTIVATED'?'Aktifkan kartu':'Simpan destination'}</button>${acts}<button class="btn s" onclick="sim('${c.rid}')">Simulasi scan</button></div></div>
+<div class="c"><h2>QR Code</h2><div class="qr">${qrSvg(u)}</div><div class="row" style="margin-top:10px"><button class="btn s sm" onclick="dlQ('${c.rid}','svg')">Download SVG</button><button class="btn s sm" onclick="dlQ('${c.rid}','png')">Download PNG</button></div><p class="m">QR berisi Permanent Redirect URL, bukan Google Review. QR tidak berubah saat destination diganti.</p></div></div>`}
+function saveD(id){const c=D.cards.find(x=>x.rid==id),d=$('#ds').value.trim();if(!d||!validUrl(d)){$('#er').textContent=!d?'Destination URL wajib diisi.':'Gunakan URL HTTPS yang valid.';return}
+ const was=c.status;c.dest=d;c.biz=$('#bz').value.trim();if(was=='UNACTIVATED'){c.status='ACTIVE';c.act=Date.now();log('ACTIVATE_CARD',c.cid,c.biz)}else log('EDIT_DESTINATION',c.cid,c.biz);toast(was=='UNACTIVATED'?'Kartu diaktifkan':'Destination diperbarui');route()}
+function disableC(id){const c=D.cards.find(x=>x.rid==id);confirmD('Nonaktifkan kartu ini?','QR dan URL kartu tetap tersimpan, tetapi kartu tidak akan lagi mengarahkan pelanggan ke destination.','Nonaktifkan',()=>{c.status='DISABLED';log('DISABLE_CARD',c.cid,c.biz);toast('Kartu dinonaktifkan');route()},1)}
+function reactC(id){const c=D.cards.find(x=>x.rid==id);confirmD('Aktifkan kembali kartu ini?',c.dest?'Kartu akan kembali mengarahkan ke destination.':'Destination kosong, kartu kembali ke status belum aktif.','Aktifkan kembali',()=>{c.status=c.dest?'ACTIVE':'UNACTIVATED';log('REACTIVATE_CARD',c.cid,c.biz);toast('Kartu diaktifkan kembali');route()})}
+function sim(id){const c=D.cards.find(x=>x.rid==(id||'').toUpperCase().trim());let m,t;
+ if(!c){t='404';m='Kartu tidak ditemukan.'}else if(c.status=='ACTIVE'){t='302 Redirect';m='Pelanggan diarahkan ke: '+esc(c.dest);EV[6][Math.random()<.63?'qr':'nfc']++;save()}else if(c.status=='UNACTIVATED'){t='Halaman aktivasi';m='Kartu belum diaktifkan.'}else{t='Halaman kartu tidak aktif';m='Kartu ini sedang tidak aktif.'}
+ $('#ov').innerHTML=`<div class="ov"><div class="md"><h2>${t}</h2><p>${m}</p><p class="m">GET ${DOM}${esc(id)}</p><div class="row" style="justify-content:flex-end"><button class="btn" onclick="$('#ov').innerHTML=''">Tutup</button></div></div></div>`}
+function batches(){return `<div class="row" style="justify-content:space-between"><h1>Batches</h1><button class="btn" onclick="location.hash='#create'">+ Buat Batch Kartu</button></div><div class="c">${D.batches.length?batchTable(D.batches):'<p>Belum ada batch produksi.</p>'}</div>`}
+function batch(id){const b=D.batches.find(x=>x.id==id);if(!b)return batches();const l=D.cards.filter(c=>c.batch==id),s=k=>l.filter(c=>c.status==k).length;
+ return `<h1>${esc(b.name)}</h1><p class="m">Batch ID ${b.id} · ${b.qty} kartu · dibuat ${fd(b.at)} oleh Admin</p><div class="g4" style="margin:16px 0">${[['Total',l.length],['Active',s('ACTIVE')],['Unactivated',s('UNACTIVATED')],['Disabled',s('DISABLED')]].map(x=>`<div class="c" style="margin:0"><span class="m">${x[0]}</span><div class="big">${x[1]}</div></div>`).join('')}</div>
+<div class="row" style="margin-bottom:12px"><button class="btn" onclick="zipB('${b.id}')">Download QR ZIP</button><button class="btn s" onclick="csvB('${b.id}')">Export CSV</button><button class="btn s" onclick="S.batch='${b.id}';S.f='ALL';S.q='';location.hash='#cards'">Lihat semua kartu</button></div><div class="c"><h2>10 kartu pertama</h2>${CT}${cardRows(l.slice(0,10))}</table></div></div>`}
+function create(){return `<h1>Create Cards</h1><p class="m">Generate kartu, Card ID, Redirect ID, dan QR sekaligus.</p><div class="c" style="max-width:520px"><label>Nama Batch</label><input id="bn" class="fl" value="September Production #003"><label>Quantity (1–10.000)</label><input id="bq" type="number" class="fl" value="100" min="1" max="10000"><label>Notes</label><input id="bo" class="fl"><p class="m" id="er" style="color:var(--er)"></p><button class="btn" onclick="gen()">Generate Cards</button></div>`}
+function gen(){const n=$('#bn').value.trim(),q=+$('#bq').value,o=$('#bo').value;if(!n||!(q>=1&&q<=10000)||q%1){$('#er').textContent='Isi nama batch dan jumlah antara 1 dan 10.000.';return}
+ confirmD('Generate batch?',`${q} kartu akan dibuat dengan status belum aktif.`,'Generate Cards',()=>{$('#app').innerHTML=`<h1>${esc(n)}</h1><div class="c" style="max-width:520px"><p id="pg">Generating cards… 0 / ${q}</p><div class="bar"><i id="pb" style="width:0"></i></div></div>`;
+ genBatch(n,q,o,e=>{$('#pg').textContent=`Generating cards… ${e} / ${q}`;$('#pb').style.width=e/q*100+'%'}).then(b=>{toast(q+' kartu dibuat');location.hash='#batch/'+b.id})})}
+async function genBatch(name,qty,notes,onp){const b={id:'b'+(D.batches.length+1),name,qty,notes,at:Date.now(),status:'GENERATING'};D.batches.unshift(b);
+ for(let i=0;i<qty;i+=500){const e=Math.min(qty,i+500);for(let j=i;j<e;j++){const r=rid();D.cards.push({cid:'TRL-'+r,rid:r,batch:b.id,status:'UNACTIVATED',biz:'',dest:'',at:b.at,act:null})}onp(e);await new Promise(r=>setTimeout(r,0))}
+ b.status='COMPLETED';log('CREATE_BATCH',b.name,qty+' kartu');return b}
+function redirect(){return `<h1>Uji Redirect</h1><p class="m">Simulasi membuka ${DOM}{redirectId}.</p><div class="c row"><input id="ri" placeholder="Contoh: ${D.cards[0].rid}"><button class="btn" onclick="sim($('#ri').value)">Buka URL</button></div>`}
+function analytics(){const tq=EV.reduce((a,e)=>a+e.qr,0),tn=EV.reduce((a,e)=>a+e.nfc,0);return `<h1>Analytics</h1><div class="g4" style="margin:16px 0">${[['Total Interaksi',tq+tn],['QR Scan',tq],['NFC Tap',tn]].map(x=>`<div class="c" style="margin:0"><span class="m">${x[0]}</span><div class="big">${x[1].toLocaleString('id-ID')}</div></div>`).join('')}</div><div class="c"><h2>7 hari terakhir</h2>${chart()}</div>`}
+function settings(){return `<h1>Settings</h1><div class="c"><label>Redirect domain</label><code>${DOM}</code><p class="m">Di versi produksi dibaca dari NEXT_PUBLIC_REDIRECT_DOMAIN, bukan hardcode.</p><button class="btn s" style="margin-top:14px" onclick="confirmD('Reset data demo?','Semua kartu dan batch buatanmu akan dihapus dan data awal dimuat ulang.','Reset',()=>{try{localStorage.removeItem('terulas')}catch(e){}location.reload()},1)">Reset data demo</button><h2 style="margin-top:20px">Activity Log</h2>${D.logs.slice(0,15).map(l=>`<div style="padding:5px 0;border-bottom:1px solid var(--bd)"><code>${l.action}</code> ${esc(l.entity)} <span class="m">${ago(l.t)}</span></div>`).join('')}</div>`}
+addEventListener('hashchange',route);route();
+</script></body></html>
